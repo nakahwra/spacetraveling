@@ -1,1 +1,21 @@
-// TODO
+.headerContainer {
+  // border: 1px solid red;
+
+  height: 5rem;
+}
+
+.headerContent {
+  // border: 1px solid green;
+
+  max-width: 1120px;
+  height: 100%;
+  padding: 0 2rem;
+  margin: 0 auto;
+
+  display: flex;
+
+  img {
+    align-self: center;
+    cursor: pointer;
+  }
+}
