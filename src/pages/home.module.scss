@@ -1,1 +1,69 @@
-// TODO
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2rem 2rem;
+  height: calc(100vh - 5rem); // 100% da view-height descontando o altura do header
+}
+
+.posts {
+  a {
+    display: block;
+    
+    & + a {
+      margin-top: 3rem;
+    }
+
+    &:hover strong {
+      color: var(--pink-500);
+    }
+
+    strong {
+      display: block;
+      margin-bottom: .5rem;
+
+      font-size: 1.75rem;
+      color: var(--gray-100);
+
+      transition: color 0.2s;
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+      
+      font-size: 1.125rem;
+      color: var(--gray-200)
+    }
+
+    div {
+      display: flex;
+
+      time, span {
+        display: flex;
+        align-items: center;
+
+        font-size: 0.875rem;
+        color: var(--gray-300);
+
+        &:first-child {
+          margin-right: 1.5rem;
+        }
+
+        .icons {
+          margin-right: .5rem;
+          
+          font-size: 1.125rem;
+        }
+      }
+    }
+  }
+
+  .loadPosts {
+    cursor: pointer;
+    
+    display: block;
+    margin-top: 4rem;
+
+    font-weight: bold;
+    color: var(--pink-500);
+  }
+}
