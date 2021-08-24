@@ -7,7 +7,7 @@
 .headerContent {
   // border: 1px solid green;
 
-  max-width: 1120px;
+  max-width: var(--width);
   height: 100%;
   padding: 0 2rem;
   margin: 0 auto;
