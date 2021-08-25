@@ -1,11 +1,14 @@
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
+import { useState } from 'react';
 
 import { getPrismicClient } from '../services/prismic';
 import Prismic from "@prismicio/client";
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
+
+import { dateFormat } from '../utils/helpers';
 
 import { FiCalendar, FiUser } from 'react-icons/fi'
 
@@ -28,7 +31,14 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home() {
+export default function Home({ postsPagination }: HomeProps) {
+  const parsedPosts = postsPagination.results.map(post => ({
+    ...post,
+    first_publication_date: dateFormat(post.first_publication_date)
+  }))
+
+  const [posts, setPosts] = useState<Post[]>(parsedPosts);
+
   return (
     <>
       <Head>
@@ -37,33 +47,16 @@ export default function Home() {
 
       <main className={styles.container}>
         <div className={styles.posts}>
-          <a href="#">
-            <strong>Como utilizar Hooks</strong>
-            <p>Pensando em sincronização em vez de ciclos de vida.</p>
-            <div>
-              <time><FiCalendar className={styles.icons} /> 15 Mar 2021</time>
-              <span><FiUser className={styles.icons} /> Lucas Nakahara</span>
-            </div>
-          </a>
-
-          <a href="#">
-            <strong>Como utilizar Hooks</strong>
-            <p>Pensando em sincronização em vez de ciclos de vida.</p>
-            <div>
-              <time><FiCalendar className={styles.icons} /> 15 Mar 2021</time>
-              <span><FiUser className={styles.icons} /> Lucas Nakahara</span>
-            </div>
-          </a>
-
-          <a href="#">
-            <strong>Como utilizar Hooks</strong>
-            <p>Pensando em sincronização em vez de ciclos de vida.</p>
-            <div>
-              <time><FiCalendar className={styles.icons} /> 15 Mar 2021</time>
-              <span><FiUser className={styles.icons} /> Lucas Nakahara</span>
-            </div>
-          </a>
-
+          { posts.map(post => (
+            <a href="" key={post.uid}>
+              <strong>{post.data.title}</strong>
+              <p>{post.data.subtitle}</p>
+              <div>
+                <time><FiCalendar className={styles.icons} />{post.first_publication_date}</time>
+                <span><FiUser className={styles.icons} />{post.data.author}</span>
+              </div>
+            </a>
+          )) }
           <span className={styles.loadPosts} >Carregar mais posts</span>
         </div>
       </main>
@@ -81,7 +74,7 @@ export const getStaticProps: GetStaticProps = async () => {
     pageSize: 1,
   });
 
-  const posts = postsResponse.results.map(post => {
+  const posts: Post[] = postsResponse.results.map(post => {
     return {
       uid: post.uid,
       first_publication_date: post.first_publication_date,
