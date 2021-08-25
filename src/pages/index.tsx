@@ -1,5 +1,7 @@
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
+
 import { useState } from 'react';
 
 import { getPrismicClient } from '../services/prismic';
@@ -48,14 +50,16 @@ export default function Home({ postsPagination }: HomeProps) {
       <main className={styles.container}>
         <div className={styles.posts}>
           { posts.map(post => (
-            <a href="" key={post.uid}>
-              <strong>{post.data.title}</strong>
-              <p>{post.data.subtitle}</p>
-              <div>
-                <time><FiCalendar className={styles.icons} />{post.first_publication_date}</time>
-                <span><FiUser className={styles.icons} />{post.data.author}</span>
-              </div>
-            </a>
+            <Link href={`/post/${post.uid}`}>
+              <a href="" key={post.uid}>
+                <strong>{post.data.title}</strong>
+                <p>{post.data.subtitle}</p>
+                <div>
+                  <time><FiCalendar className={styles.icons} />{post.first_publication_date}</time>
+                  <span><FiUser className={styles.icons} />{post.data.author}</span>
+                </div>
+              </a>
+            </Link>
           )) }
           <span className={styles.loadPosts} >Carregar mais posts</span>
         </div>
