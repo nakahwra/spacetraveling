@@ -33,13 +33,41 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home({ postsPagination }: HomeProps) {
-  const parsedPosts = postsPagination.results.map(post => ({
+function handlePostFormat(postsResponse) {
+  const posts = postsResponse.map(post => ({
+    uid: post.uid,
+    first_publication_date: post.first_publication_date,
+    data: {
+      title: post.data.title,
+      subtitle: post.data.subtitle,
+      author: post.data.author,
+    }
+  }))
+  return posts;
+}
+
+function handlePostDateFormat(postsResults) {
+  const posts = postsResults.map(post => ({
     ...post,
     first_publication_date: dateFormat(post.first_publication_date)
   }))
+  return posts;
+}
+
+export default function Home({ postsPagination }: HomeProps) {
+  const parsedPosts = handlePostDateFormat(postsPagination.results);
 
   const [posts, setPosts] = useState<Post[]>(parsedPosts);
+  const [nextPage, setNextPage] = useState<string>(postsPagination.next_page);
+
+  async function handleNewPosts() {
+    const response = await fetch(nextPage)
+                            .then(response => response.json());
+
+    const newPosts = handlePostDateFormat(handlePostFormat(response.results));
+    setPosts([...posts, ...newPosts]);
+    setNextPage(response.next_page);
+  }
 
   return (
     <>
@@ -51,7 +79,7 @@ export default function Home({ postsPagination }: HomeProps) {
         <div className={styles.posts}>
           { posts.map(post => (
             <Link key={post.uid} href={`/post/${post.uid}`}>
-              <a href="">
+              <a>
                 <strong>{post.data.title}</strong>
                 <p>{post.data.subtitle}</p>
                 <div>
@@ -61,7 +89,7 @@ export default function Home({ postsPagination }: HomeProps) {
               </a>
             </Link>
           )) }
-          <span className={styles.loadPosts} >Carregar mais posts</span>
+          { nextPage && <span onClick={handleNewPosts} className={styles.loadPosts} >Carregar mais posts</span>}
         </div>
       </main>
     </>
@@ -78,17 +106,7 @@ export const getStaticProps: GetStaticProps = async () => {
     pageSize: 1,
   });
 
-  const posts: Post[] = postsResponse.results.map(post => {
-    return {
-      uid: post.uid,
-      first_publication_date: post.first_publication_date,
-      data: {
-        title: post.data.title,
-        subtitle: post.data.subtitle,
-        author: post.data.author,
-      }
-    }
-  });
+  const posts: Post[] = handlePostFormat(postsResponse.results);
 
   const postsPagination = {
     next_page: postsResponse.next_page,
