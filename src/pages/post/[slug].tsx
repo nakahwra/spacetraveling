@@ -2,6 +2,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 
 import { getPrismicClient } from '../../services/prismic';
+import Prismic from "@prismicio/client";
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
@@ -67,12 +68,22 @@ export default function Post() {
   )
 }
 
-// export const getStaticPaths = async () => {
-//   const prismic = getPrismicClient();
-//   const posts = await prismic.query(TODO);
+export const getStaticPaths = async () => {
+  const prismic = getPrismicClient();
 
-//   // TODO
-// };
+  const postsResponse = await prismic.query([
+    Prismic.Predicates.at('document.type', 'posts')
+  ]);
+  
+  const paths = postsResponse.results.map(post => ({
+    params: { slug: post.uid}
+  }))
+
+  return {
+    paths,
+    fallback: true,
+  }
+};
 
 // export const getStaticProps = async context => {
 //   const prismic = getPrismicClient();
