@@ -68,7 +68,7 @@ export default function Post() {
   )
 }
 
-export const getStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = async () => {
   const prismic = getPrismicClient();
 
   const postsResponse = await prismic.query([
@@ -76,7 +76,7 @@ export const getStaticPaths = async () => {
   ]);
   
   const paths = postsResponse.results.map(post => ({
-    params: { slug: post.uid}
+    params: { slug: post.uid }
   }))
 
   return {
