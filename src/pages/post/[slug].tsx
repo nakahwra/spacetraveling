@@ -8,6 +8,7 @@ import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 import { dateFormat } from '../../utils/helpers';
 import { RichText } from 'prismic-dom';
+import { useRouter } from 'next/router';
 
 interface Post {
   first_publication_date: string | null;
@@ -31,14 +32,19 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps) {
-  console.log(post.data.content[0].body)
+  const router = useRouter();
+  
   return (
     <>
       <div className={styles.imgContainer}>
         <img src={post.data.banner.url} alt="banner" />
       </div>
       <div className={`${commonStyles.container} ${styles.post}`}>
-        <h1>{ post.data.title }</h1>
+        { router.isFallback ? (
+          <h1>Carregando...</h1>
+        ) : (
+          <h1>{ post.data.title }</h1>
+        )}
 
         {/* TODO: Turn this into a component */}
         <div className={commonStyles.postInfo}>
